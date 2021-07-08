@@ -1,4 +1,7 @@
 # ja-ICD10
+ICD-10 国際疾病分類の日本語情報を扱うためのパッケージ
+
+## インストール
 
 
 ## 使い方
@@ -132,3 +135,8 @@ Out[]:
  <Disease:[A00.9][20058027] 偽性コレラ>] 
 ```
 
+## 情報元
+本レポジトリで利用しているデータは、下記ウェブサイトで公開されているものを利用しています。
+
+- [ICD10対応標準病名マスター　トップページ](https://www2.medis.or.jp/stdcd/byomei/index.html)
+- [標準病名マスター作業班　運用補助マスター](http://www.byomei.org/accessorytables/index.html)
