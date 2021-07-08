@@ -6,7 +6,7 @@ from icd10.util import normalize_string
 with open("data/working/index.json") as f:
     index_json = json.load(f)
 
-with open("data/main.json") as f:
+with open("data/working/main.json") as f:
     main_json = json.load(f)
 
 
