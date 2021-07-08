@@ -1,16 +1,11 @@
 import json
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Optional
-
-import pandas as pd
+from typing import List
 
 from icd10.chapter_block import chapter_block_list
 from icd10.relation import relation
 from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code, normalize_string
-
-with open("data/main.json") as f:
-    byomei_list = json.load(f)
 
 
 @dataclass
@@ -36,7 +31,6 @@ class Disease:
 
 @dataclass
 class Category:
-    byomei_id: Optional[str]
     code: str
     name: str
 
@@ -64,44 +58,10 @@ class Category:
 class ICD:
     def __init__(self) -> None:
         self.version = "20210701"
-        self.byomei_id2disease: Dict = {}
-        self.code2category: Dict = {}
-        self.index_word2icd: Dict = {}
-
-        self._initialize()
-
-    def _initialize(self):
-        for byomei in byomei_list:
-            icd_category = Disease(
-                byomei_id=str(byomei["病名管理番号"]),
-                code=byomei["ＩＣＤ１０‐２０１３"],
-                name=byomei["病名表記"],
-                name_kana=byomei["病名表記カナ"],
-                name_abbrev=byomei["傷病名省略名称"],
-                disease_exchange_id=byomei["病名交換用コード"],
-            )
-            self.byomei_id2disease[icd_category.byomei_id] = icd_category
-
-        self.byomei_id2disease[icd_category.byomei_id] = icd_category
-
-        items_df = pd.read_csv("data/raw/ClinicalCategories/ICDitems_20210701.txt", header=None)
-        for _, row in items_df.iterrows():
-            byomei_id_or_code = row[0]
-            normalized_byomei_id_or_code = normalize_icd_code(byomei_id_or_code)
-            name = row[1]
-
-            if re.match(r"^\d{8}$", byomei_id_or_code):
-                # `20050004 １８常染色体異常` といった場合
-                # self.code2category[normalized_byomei_id_or_code] = Category(
-                #     byomei_id=byomei_id_or_code, code=None, name=name
-                # )
-                pass
-            else:
-                # `A00 コレラ` といった場合
-                self.code2category[normalized_byomei_id_or_code] = Category(
-                    byomei_id=None, code=byomei_id_or_code, name=name
-                )
-
+        with open("data/byomei_id2disease.json") as f:
+            self.byomei_id2disease = {k: Disease(**v) for k, v in json.load(f).items()}
+        with open("data/icd_code2category.json") as f:
+            self.icd_code2category = {k: Category(**v) for k, v in json.load(f).items()}
         with open("data/index_word2icd.json") as f:
             self.index_word2icd = json.load(f)
 
@@ -119,8 +79,8 @@ class ICD:
         """
         query_code = normalize_icd_code(query_code)
 
-        if query_code in self.code2category:
-            return self.code2category[query_code]
+        if query_code in self.icd_code2category:
+            return self.icd_code2category[query_code]
         else:
             raise ValueError(f"{query_code} is not valid ICD-10 Code")
 
@@ -140,7 +100,7 @@ class ICD:
         query_str_lower = normalize_string(query_str).lower()  # index_word2icd.jsonのkeyと合わせる
         if query_str_lower in self.index_word2icd:
             icd_codes = self.index_word2icd[query_str_lower]
-            return [self.code2category[icd_code] for icd_code in icd_codes]
+            return [self.icd_code2category[icd_code] for icd_code in icd_codes]
 
         return []
 
@@ -181,7 +141,7 @@ class ICD:
             if re.match(r"^\d{8}$", byomei_id_or_code):
                 disease_list.append(self.byomei_id2disease[byomei_id_or_code])
             else:
-                disease_list.append(self.code2category[normalize_icd_code(byomei_id_or_code)])
+                disease_list.append(self.icd_code2category[normalize_icd_code(byomei_id_or_code)])
                 for n in relation[byomei_id_or_code]:
                     _get_leaf_nodes(n)
 

@@ -31,5 +31,5 @@ def recursive_expand(icd10_id):
 
 result = recursive_expand("1")
 
-with open("data/icd_hierarchy.json", "w") as f:
+with open("data/working/icd_hierarchy.json", "w") as f:
     json.dump(result, f, ensure_ascii=False, indent=4)

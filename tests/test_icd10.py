@@ -12,7 +12,6 @@ def test_get_category_by_code(icd):
     category = icd["A000"]
     assert category.name == "コレラ菌によるコレラ"
     assert category.code == "A00.0"
-    assert category.byomei_id is None
     assert category.is_block is False
     assert category.is_chapter is False
 
@@ -22,7 +21,6 @@ def test_get_category_by_code_5_digit(icd):
     assert category.name == "カフェインによる精神及び行動の障害，急性中毒"
     assert category.code == "F15.0a"
     assert category.normalized_code == "F150a"
-    assert category.byomei_id is None
     assert category.is_block is False
     assert category.is_chapter is False
 
@@ -31,7 +29,6 @@ def test_get_category_by_code_point_dash(icd):
     category = icd["F15.-a"]
     assert category.name == "カフェインによる精神及び行動の障害"
     assert category.code == "F15.-a"
-    assert category.byomei_id is None
     assert category.is_block is False
     assert category.is_chapter is False
 
@@ -41,7 +38,6 @@ def test_get_category_by_code_blocks(icd):
     category = icd["A00"]
     assert category.name == "コレラ"
     assert category.code == "A00"
-    assert category.byomei_id is None
     assert category.is_block is True
     assert category.is_chapter is False
 
