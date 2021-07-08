@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 
 def normalize_icd_code(code: str) -> str:
@@ -16,3 +17,10 @@ def is_valid_byomei_id_or_code(byomei_id_or_code: str) -> bool:
         # e.g. A00-A09
         return True
     return False
+
+
+def normalize_string(s: str) -> str:
+    s = unicodedata.normalize("NFKC", s)
+    s = re.sub("[˗֊‐‑‒–⁃⁻₋−]+", "-", s)  # normalize hyphens
+    s = re.sub("[﹣－ｰ—―─━ー]+", "ー", s)  # normalize choonpus
+    return s

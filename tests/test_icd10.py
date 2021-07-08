@@ -71,12 +71,6 @@ def test_icd10_by_code_invalid(icd):
         icd["A0000"]
 
 
-def test_find_categories_by_name(icd):
-    assert icd.find_categories_by_name("") == []
-
-    assert len(icd.find_categories_by_name("腸管病原性大腸菌感染症")) == 1
-
-
 def test_get_diseases_by_code(icd):
     # http://www.byomei.org/Scripts/ICD10Categories/default2_ICD.asp?CategoryID=A00.0
     assert len(icd.get_diseases_by_code("A000")) == 2
@@ -112,3 +106,40 @@ def test_get_diseases_and_categories_by_code_invalid(icd):
     # 正しいICD-10コードでは無い場合
     assert icd.get_diseases_and_categories_by_code("") == []
     assert icd.get_diseases_and_categories_by_code("invalid_code") == []
+
+
+def test_find_categories_by_name(icd):
+    assert icd.find_categories_by_name("") == []
+
+    assert len(icd.find_categories_by_name("腸管病原性大腸菌感染症")) == 1
+
+
+def test_find_categories_by_name_normalize_string(icd):
+    # NFKC normalizeのあとにlowerで統一している
+
+    # 数字
+    assert len(icd.find_categories_by_name("13トリソミー")) == 1  # 小文字
+    assert len(icd.find_categories_by_name("１３トリソミー")) == 1
+
+    # 英字
+    assert len(icd.find_categories_by_name("AADC欠損症")) == 1
+    assert len(icd.find_categories_by_name("aadc欠損症")) == 1
+    assert len(icd.find_categories_by_name("ＡＡＤＣ欠損症")) == 1
+
+    # 記号
+    assert len(icd.find_categories_by_name("鳥インフルエンザ（Ｈ７Ｎ９）")) == 1
+    assert len(icd.find_categories_by_name("２２ｑ１１．２欠失症候群")) == 1
+    assert len(icd.find_categories_by_name("ＣＡＤ／ＣＡＭ冠破損")) == 1
+    assert len(icd.find_categories_by_name("体表面積１０−１９％の熱傷")) == 1  # MINUS SIGN
+    assert len(icd.find_categories_by_name("体表面積10-19%の熱傷")) == 1  # HYPHEN-MINUS
+
+    # ローマ数字
+    assert len(icd.find_categories_by_name("ムコ多糖症ＩＩＩ型")) == 1
+
+    # ギリシャ文字
+    assert len(icd.find_categories_by_name("原発性皮膚γδT細胞リンパ腫")) == 1
+
+
+def test_find_categories_by_name_not_found_by_exchange_code(icd):
+    # (外総診) に対応する "対応用語コード":"1BFG" は、ICD-10には無い
+    assert len(icd.find_categories_by_name("(外総診)")) == 0

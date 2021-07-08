@@ -7,7 +7,7 @@ import pandas as pd
 
 from icd10.chapter_block import chapter_block_list
 from icd10.relation import relation
-from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code
+from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code, normalize_string
 
 with open("data/main.json") as f:
     byomei_list = json.load(f)
@@ -37,7 +37,7 @@ class Disease:
 @dataclass
 class Category:
     byomei_id: Optional[str]
-    code: Optional[str]
+    code: str
     name: str
 
     @property
@@ -66,6 +66,7 @@ class ICD:
         self.version = "20210701"
         self.byomei_id2disease: Dict = {}
         self.code2category: Dict = {}
+        self.index_word2icd: Dict = {}
 
         self._initialize()
 
@@ -101,6 +102,9 @@ class ICD:
                     byomei_id=None, code=byomei_id_or_code, name=name
                 )
 
+        with open("data/index_word2icd.json") as f:
+            self.index_word2icd = json.load(f)
+
     def get_category_by_code(self, query_code: str) -> Category:
         """ICD-10のコードからカテゴリーを取得する
 
@@ -121,23 +125,24 @@ class ICD:
             raise ValueError(f"{query_code} is not valid ICD-10 Code")
 
     def find_categories_by_name(self, query_str: str) -> List[Category]:
-        """検索文字列を含むカテゴリー名を検索する
+        """検索文字列を、インデックスまたはカテゴリー名内から検索する
 
         Args:
             query_str (str): 検索文字列
 
         Returns:
-            List[Category]: 検索文字列を含むカテゴリーのリスト
+            List[Category]: 該当するカテゴリーのリスト
         """
         if query_str == "":
             return []
 
-        results = []
-        for _, category in self.code2category.items():
-            if query_str in category.name:
-                results.append(category)
+        # indexを探索
+        query_str_lower = normalize_string(query_str).lower()  # index_word2icd.jsonのkeyと合わせる
+        if query_str_lower in self.index_word2icd:
+            icd_codes = self.index_word2icd[query_str_lower]
+            return [self.code2category[icd_code] for icd_code in icd_codes]
 
-        return results
+        return []
 
     def get_diseases_by_code(self, query_code: str) -> List[Disease]:
         """ICD-10のコードの階層以下に含まれるすべての傷病を返す
