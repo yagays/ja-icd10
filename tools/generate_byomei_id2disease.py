@@ -5,9 +5,14 @@ with open("data/working/main.json") as f:
 
 byomei_id2disease = {}
 for byomei in byomei_list:
+    if byomei["ＩＣＤ１０‐２０１３"]:
+        icd_code = byomei["ＩＣＤ１０‐２０１３"]
+    else:
+        icd_code = ""
+
     icd_category = {
         "byomei_id": str(byomei["病名管理番号"]),
-        "code": byomei["ＩＣＤ１０‐２０１３"],
+        "code": icd_code,
         "name": byomei["病名表記"],
         "name_kana": byomei["病名表記カナ"],
         "name_abbrev": byomei["傷病名省略名称"],

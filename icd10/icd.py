@@ -85,7 +85,7 @@ class ICD:
         else:
             raise ValueError(f"{query_code} is not valid ICD-10 Code")
 
-    def get_disease_by_byomei_id(self, query_code: str) -> Category:
+    def get_disease_by_byomei_id(self, query_code: str) -> Disease:
         """病名管理番号のコードから傷病を取得する
 
         Args:
@@ -103,12 +103,12 @@ class ICD:
         else:
             raise ValueError(f"{query_code} is not valid byomei_id Code")
 
-
-    def find_categories_by_name(self, query_str: str) -> List[Category]:
-        """検索文字列を、インデックスまたはカテゴリー名内から検索する
+    def find_categories_by_name(self, query_str: str, partial_match: bool = False) -> List[Category]:
+        """検索文字列を、索引またはカテゴリー名内から検索する
 
         Args:
             query_str (str): 検索文字列
+            partial_match (bool, optional): 索引情報を使わず、カテゴリ名からの部分一致を検索するか. Defaults to False.
 
         Returns:
             List[Category]: 該当するカテゴリーのリスト
@@ -116,13 +116,20 @@ class ICD:
         if query_str == "":
             return []
 
-        # indexを探索
-        query_str_lower = normalize_string(query_str).lower()  # index_word2icd.jsonのkeyと合わせる
-        if query_str_lower in self.index_word2icd:
-            icd_codes = self.index_word2icd[query_str_lower]
-            return [self.icd_code2category[icd_code] for icd_code in icd_codes]
-
-        return []
+        if not partial_match:
+            # indexを探索
+            query_str_lower = normalize_string(query_str).lower()  # index_word2icd.jsonのkeyと合わせる
+            if query_str_lower in self.index_word2icd:
+                icd_codes = self.index_word2icd[query_str_lower]
+                return [self.icd_code2category[icd_code] for icd_code in icd_codes]
+            else:
+                return []
+        else:
+            results = []
+            for _, category in self.icd_code2category.items():
+                if query_str in category.name:
+                    results.append(category)
+            return results
 
     def get_diseases_by_code(self, query_code: str) -> List[Disease]:
         """ICD-10のコードの階層以下に含まれるすべての傷病を返す

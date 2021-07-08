@@ -126,6 +126,11 @@ def test_find_categories_by_name(icd):
     assert len(icd.find_categories_by_name("腸管病原性大腸菌感染症")) == 1
 
 
+def test_find_categories_by_name_partial_match(icd):
+    assert len(icd.find_categories_by_name("頭痛")) == 1
+    assert len(icd.find_categories_by_name("頭痛", partial_match=True)) == 18
+
+
 def test_find_categories_by_name_normalize_string(icd):
     # NFKC normalizeのあとにlowerで統一している
 
