@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import List
 
 from icd10.chapter_block import chapter_block_list
-from icd10.relation import relation
 from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code, normalize_string
 
 
@@ -64,6 +63,8 @@ class ICD:
             self.icd_code2category = {k: Category(**v) for k, v in json.load(f).items()}
         with open("data/index_word2icd.json") as f:
             self.index_word2icd = json.load(f)
+        with open("data/icd_code2byomei_ids_or_icd_codes.json") as f:
+            self.icd_code2byomei_ids_or_icd_codes = json.load(f)
 
     def get_category_by_code(self, query_code: str) -> Category:
         """ICD-10のコードからカテゴリーを取得する
@@ -124,7 +125,7 @@ class ICD:
             if re.match(r"^\d{8}$", byomei_id_or_code):
                 disease_list.append(self.byomei_id2disease[byomei_id_or_code])
             else:
-                for n in relation[byomei_id_or_code]:
+                for n in self.icd_code2byomei_ids_or_icd_codes.get(byomei_id_or_code, []):
                     _get_leaf_nodes(n)
 
         _get_leaf_nodes(query_code)
@@ -142,7 +143,7 @@ class ICD:
                 disease_list.append(self.byomei_id2disease[byomei_id_or_code])
             else:
                 disease_list.append(self.icd_code2category[normalize_icd_code(byomei_id_or_code)])
-                for n in relation[byomei_id_or_code]:
+                for n in self.icd_code2byomei_ids_or_icd_codes.get(byomei_id_or_code, []):
                     _get_leaf_nodes(n)
 
         _get_leaf_nodes(query_code)
