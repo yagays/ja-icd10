@@ -1,4 +1,5 @@
-from icd10.util import normalize_icd_code, is_valid_byomei_id_or_code
+from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code
+
 
 def test_normalize_icd_code():
     assert normalize_icd_code("A000") == "A000"

@@ -16,4 +16,3 @@ def is_valid_byomei_id_or_code(byomei_id_or_code: str) -> bool:
         # e.g. A00-A09
         return True
     return False
-

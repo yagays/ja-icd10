@@ -112,4 +112,3 @@ def test_get_diseases_and_categories_by_code_invalid(icd):
     # 正しいICD-10コードでは無い場合
     assert icd.get_diseases_and_categories_by_code("") == []
     assert icd.get_diseases_and_categories_by_code("invalid_code") == []
-

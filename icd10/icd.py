@@ -1,15 +1,13 @@
 import json
 import re
-
 from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 import pandas as pd
 
-
 from icd10.chapter_block import chapter_block_list
 from icd10.relation import relation
-from icd10.util import normalize_icd_code, is_valid_byomei_id_or_code
+from icd10.util import is_valid_byomei_id_or_code, normalize_icd_code
 
 with open("data/main.json") as f:
     byomei_list = json.load(f)
@@ -193,4 +191,3 @@ if __name__ == "__main__":
     icd = ICD()
     print(icd.get_category_by_code("A00.0"))
     # print(icd.find_categories_by_name("頭痛"))
-
