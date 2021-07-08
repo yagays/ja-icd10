@@ -64,7 +64,23 @@ def test_get_category_by_code_chapter(icd):
 
 def test_icd10_by_code_invalid(icd):
     with pytest.raises(ValueError):
+        icd[""]
+    with pytest.raises(ValueError):
         icd["A0000"]
+
+
+def test_get_disease_by_byomei_id(icd):
+    disease = icd.get_disease_by_byomei_id("20100524")
+    assert disease.byomei_id == "20100524"
+    assert disease.code == "E250"
+    assert disease.name == "１１β−水酸化酵素欠損症"
+
+
+def test_get_disease_by_byomei_id_invalid(icd):
+    with pytest.raises(ValueError):
+        icd.get_disease_by_byomei_id("")
+    with pytest.raises(ValueError):
+        icd.get_disease_by_byomei_id("99999999")
 
 
 def test_get_diseases_by_code(icd):

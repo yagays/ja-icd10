@@ -85,6 +85,25 @@ class ICD:
         else:
             raise ValueError(f"{query_code} is not valid ICD-10 Code")
 
+    def get_disease_by_byomei_id(self, query_code: str) -> Category:
+        """病名管理番号のコードから傷病を取得する
+
+        Args:
+            query_code (str): 病名管理番号の文字列
+
+        Raises:
+            ValueError: 与えられた病名管理番号が存在しなかった場合
+
+        Returns:
+            Category: 病名管理番号に対応する傷病
+        """
+
+        if query_code in self.byomei_id2disease:
+            return self.byomei_id2disease[query_code]
+        else:
+            raise ValueError(f"{query_code} is not valid byomei_id Code")
+
+
     def find_categories_by_name(self, query_str: str) -> List[Category]:
         """検索文字列を、インデックスまたはカテゴリー名内から検索する
 
