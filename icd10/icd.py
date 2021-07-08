@@ -114,39 +114,45 @@ class ICD:
         Returns:
             List[Disease]: 含まれる傷病のリスト
         """
-
-        if not is_valid_byomei_id_or_code(query_code):
-            return []
-
-        disease_list = []
-        query_code = normalize_icd_code(query_code)
-
-        def _get_leaf_nodes(byomei_id_or_code):
-            if re.match(r"^\d{8}$", byomei_id_or_code):
-                disease_list.append(self.byomei_id2disease[byomei_id_or_code])
-            else:
-                for n in self.icd_code2byomei_ids_or_icd_codes.get(byomei_id_or_code, []):
-                    _get_leaf_nodes(n)
-
-        _get_leaf_nodes(query_code)
-        return disease_list
+        return self._get_by_code(query_code, include_category=False)
 
     def get_diseases_and_categories_by_code(self, query_code: str) -> List[Disease]:
+        """ICD-10のコードの階層以下に含まれるすべての傷病とカテゴリーを返す
+
+        Args:
+            query_code (str): ICD-10のコード文字列
+
+        Returns:
+            List[Disease]: 含まれる傷病とカテゴリーのリスト
+        """
+        return self._get_by_code(query_code, include_category=True)
+
+    def _get_by_code(self, query_code: str, include_category: bool = False) -> List[Disease]:
+        """ICD-10のコードの階層以下に含まれるすべての要素を返す
+
+        Args:
+            query_code (str): ICD-10のコード文字列
+            include_category (bool, optional): カテゴリーを取得するか. Defaults to False.
+
+        Returns:
+            List[Disease]: 取得された要素のリスト
+        """
         if not is_valid_byomei_id_or_code(query_code):
             return []
 
         disease_list = []
         query_code = normalize_icd_code(query_code)
 
-        def _get_leaf_nodes(byomei_id_or_code):
+        def _get_categories_and_diseases(byomei_id_or_code):
             if re.match(r"^\d{8}$", byomei_id_or_code):
                 disease_list.append(self.byomei_id2disease[byomei_id_or_code])
             else:
-                disease_list.append(self.icd_code2category[normalize_icd_code(byomei_id_or_code)])
+                if include_category:
+                    disease_list.append(self.icd_code2category[normalize_icd_code(byomei_id_or_code)])
                 for n in self.icd_code2byomei_ids_or_icd_codes.get(byomei_id_or_code, []):
-                    _get_leaf_nodes(n)
+                    _get_categories_and_diseases(n)
 
-        _get_leaf_nodes(query_code)
+        _get_categories_and_diseases(query_code)
         return disease_list
 
     def __getitem__(self, name: str) -> Category:
