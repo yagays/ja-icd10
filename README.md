@@ -8,7 +8,9 @@ ICD-10 国際疾病分類の日本語情報を扱うためのパッケージ
 まず、ICDクラスのインスタンスを作成します。
 
 ```python
-icd = ICD()
+from icd10 import icd
+
+icd = icd.ICD()
 ```
 
 ### ICD-10のカテゴリー情報を取得する
