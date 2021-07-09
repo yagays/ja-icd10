@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ja-icd10"
-version = "0.1.0"
+version = "0.1.0-20210701"
 description = "ICD-10 国際疾病分類の日本語情報を扱うためのパッケージ"
 authors = ["Yuki Okuda <y.okuda@dr-ubie.com>"]
 packages = [
