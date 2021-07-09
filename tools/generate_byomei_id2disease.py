@@ -1,3 +1,4 @@
+import gzip
 import json
 
 with open("data/working/main.json") as f:
@@ -20,5 +21,5 @@ for byomei in byomei_list:
     }
     byomei_id2disease[icd_category["byomei_id"]] = icd_category
 
-with open("data/byomei_id2disease.json", "w") as f:
-    json.dump(byomei_id2disease, f, ensure_ascii=False, indent=4)
+with gzip.open("data/byomei_id2disease.json.gz", "wt", encoding="ascii") as zipfile:
+    json.dump(byomei_id2disease, zipfile)

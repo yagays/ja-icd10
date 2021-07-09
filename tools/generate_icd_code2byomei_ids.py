@@ -1,3 +1,4 @@
+import gzip
 import json
 
 import pandas as pd
@@ -16,6 +17,5 @@ for row in relation_df.itertuples():
     else:
         icd_code2byomei_ids[icd_code].append(byomei_id_or_icd_code)
 
-
-with open("data/icd_code2byomei_ids_or_icd_codes.json", "w") as f:
-    json.dump(icd_code2byomei_ids, f, ensure_ascii=False, indent=4)
+with gzip.open("data/icd_code2byomei_ids_or_icd_codes.json.gz", "wt", encoding="ascii") as zipfile:
+    json.dump(icd_code2byomei_ids, zipfile)

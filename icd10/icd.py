@@ -1,3 +1,4 @@
+import gzip
 import json
 import re
 from dataclasses import dataclass
@@ -57,14 +58,14 @@ class Category:
 class ICD:
     def __init__(self) -> None:
         self.version = "20210701"
-        with open("data/byomei_id2disease.json") as f:
-            self.byomei_id2disease = {k: Disease(**v) for k, v in json.load(f).items()}
-        with open("data/icd_code2category.json") as f:
-            self.icd_code2category = {k: Category(**v) for k, v in json.load(f).items()}
-        with open("data/index_word2icd.json") as f:
-            self.index_word2icd = json.load(f)
-        with open("data/icd_code2byomei_ids_or_icd_codes.json") as f:
-            self.icd_code2byomei_ids_or_icd_codes = json.load(f)
+        with gzip.open("data/byomei_id2disease.json.gz", "rt", encoding="utf-8") as zipfile:
+            self.byomei_id2disease = {k: Disease(**v) for k, v in json.load(zipfile).items()}
+        with gzip.open("data/icd_code2category.json.gz", "rt", encoding="utf-8") as zipfile:
+            self.icd_code2category = {k: Category(**v) for k, v in json.load(zipfile).items()}
+        with gzip.open("data/index_word2icd.json.gz", "rt", encoding="utf-8") as zipfile:
+            self.index_word2icd = json.load(zipfile)
+        with gzip.open("data/icd_code2byomei_ids_or_icd_codes.json.gz", "rt", encoding="utf-8") as zipfile:
+            self.icd_code2byomei_ids_or_icd_codes = json.load(zipfile)
 
     def get_category_by_code(self, query_code: str) -> Category:
         """ICD-10のコードからカテゴリーを取得する
