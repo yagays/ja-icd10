@@ -25,5 +25,5 @@ for row in index_json:
     if exchange_code in exchange2icd and exchange2icd[exchange_code] not in index_word2icd[index_word]:
         index_word2icd[index_word].append(exchange2icd[exchange_code])
 
-with gzip.open("data/index_word2icd.json.gz", "wt", encoding="ascii") as zipfile:
+with gzip.open("icd10/data/index_word2icd.json.gz", "wt", encoding="ascii") as zipfile:
     json.dump(index_word2icd, zipfile)

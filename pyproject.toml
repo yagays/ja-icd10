@@ -1,17 +1,12 @@
 [tool.poetry]
 name = "ja-icd10"
-version = "0.1.1-20210701"
+version = "0.1.2-20210701"
 description = "ICD-10 国際疾病分類の日本語情報を扱うためのパッケージ"
 authors = ["Yuki Okuda <y.okuda@dr-ubie.com>"]
 packages = [
     {include = "icd10"}
 ]
 readme = "README.md"
-include = ["data/byomei_id2disease.json.gz",
-    "data/icd_code2byomei_ids_or_icd_codes.json.gz",
-    "data/icd_code2category.json.gz",
-    "data/index_word2icd.json.gz"
-]
 exclude = ["tools"]
 
 [tool.poetry.dependencies]

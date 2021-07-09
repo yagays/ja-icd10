@@ -1,5 +1,6 @@
 export PYTHONPATH="./:$PYTHONPATH"
 
+mkdir -p icd10/data
 # export all working files from byomei.zip
 poetry run python tools/generate_data_from_byomei.py
 

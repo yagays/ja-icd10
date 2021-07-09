@@ -21,5 +21,5 @@ for byomei in byomei_list:
     }
     byomei_id2disease[icd_category["byomei_id"]] = icd_category
 
-with gzip.open("data/byomei_id2disease.json.gz", "wt", encoding="ascii") as zipfile:
+with gzip.open("icd10/data/byomei_id2disease.json.gz", "wt", encoding="ascii") as zipfile:
     json.dump(byomei_id2disease, zipfile)

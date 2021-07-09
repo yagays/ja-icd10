@@ -20,5 +20,5 @@ for _, row in items_df.iterrows():
         # `A00 コレラ` といった場合
         icd_code2category[normalized_byomei_id_or_code] = {"code": byomei_id_or_code, "name": name}
 
-with gzip.open("data/icd_code2category.json.gz", "wt", encoding="ascii") as zipfile:
+with gzip.open("icd10/data/icd_code2category.json.gz", "wt", encoding="ascii") as zipfile:
     json.dump(icd_code2category, zipfile)

@@ -2,6 +2,7 @@ import gzip
 import json
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import List
 
 from icd10.chapter_block import chapter_block_list
@@ -58,13 +59,23 @@ class Category:
 class ICD:
     def __init__(self) -> None:
         self.version = "20210701"
-        with gzip.open("data/byomei_id2disease.json.gz", "rt", encoding="utf-8") as zipfile:
+        with gzip.open(
+            Path(__file__).parent.joinpath("data/byomei_id2disease.json.gz"), "rt", encoding="utf-8"
+        ) as zipfile:
             self.byomei_id2disease = {k: Disease(**v) for k, v in json.load(zipfile).items()}
-        with gzip.open("data/icd_code2category.json.gz", "rt", encoding="utf-8") as zipfile:
+        with gzip.open(
+            Path(__file__).parent.joinpath("data/icd_code2category.json.gz"), "rt", encoding="utf-8"
+        ) as zipfile:
             self.icd_code2category = {k: Category(**v) for k, v in json.load(zipfile).items()}
-        with gzip.open("data/index_word2icd.json.gz", "rt", encoding="utf-8") as zipfile:
+        with gzip.open(
+            Path(__file__).parent.joinpath("data/index_word2icd.json.gz"), "rt", encoding="utf-8"
+        ) as zipfile:
             self.index_word2icd = json.load(zipfile)
-        with gzip.open("data/icd_code2byomei_ids_or_icd_codes.json.gz", "rt", encoding="utf-8") as zipfile:
+        with gzip.open(
+            Path(__file__).parent.joinpath("data/icd_code2byomei_ids_or_icd_codes.json.gz"),
+            "rt",
+            encoding="utf-8",
+        ) as zipfile:
             self.icd_code2byomei_ids_or_icd_codes = json.load(zipfile)
 
     def get_category_by_code(self, query_code: str) -> Category:
